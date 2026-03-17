@@ -84,7 +84,7 @@ function TimelineScrubber({ activeYear, setActiveYear }) {
       setPlayState(true)
       timer.current = setInterval(() => {
         setActiveYear(prev => {
-          if (prev >= 4) {
+          if (prev >= 5) { // Stop at 5 (2024)
             clearInterval(timer.current)
             isPlaying.current = false
             setPlayState(false)
@@ -167,6 +167,11 @@ function TimelineScrubber({ activeYear, setActiveYear }) {
             onChange={e => {
               const v = parseInt(e.target.value)
               setActiveYear(v)
+            }}
+            onMouseDown={() => {
+              if (isPlaying.current) togglePlay() // Pause on manual drag start
+            }}
+            onTouchStart={() => {
               if (isPlaying.current) togglePlay()
             }}
             className="absolute inset-0 w-full opacity-0 cursor-pointer h-full"
@@ -288,9 +293,15 @@ function SegmentationMap({ location, activeYear }) {
 // ─── Sparkline SVG ─────────────────────────────────────────────────────────────
 function Sparkline({ points, color, delay = 0 }) {
   const w = 80, h = 28
-  const xs = points.map((_, i) => (i / (points.length - 1)) * w)
-  const minP = Math.min(...points), maxP = Math.max(...points)
-  const ys = points.map(p => h - ((p - minP) / (maxP - minP + 0.001)) * (h - 4) - 2)
+  // If there's only 1 point, center it and draw a flat line to avoid NaN division
+  const isSingle = points.length <= 1
+  const xs = isSingle ? [0, w] : points.map((_, i) => (i / (points.length - 1)) * w)
+  const pts = isSingle ? [points[0] || 0, points[0] || 0] : points
+
+  const minP = Math.min(...pts), maxP = Math.max(...pts)
+  // Add small padding to maxP-minP to avoid div/0 if all values are identical
+  const range = (maxP - minP) === 0 ? 0.001 : (maxP - minP)
+  const ys = pts.map(p => h - ((p - minP) / range) * (h - 4) - 2)
   const d = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x},${ys[i]}`).join(' ')
   const areaD = `${d} L${w},${h} L0,${h} Z`
   return (
