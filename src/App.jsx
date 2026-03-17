@@ -532,15 +532,11 @@ function SatelliteSlider({ location, activeYear }) {
         className="absolute top-0 bottom-0 right-0 overflow-hidden pointer-events-none"
         style={{ width: `${100 - sliderPos}%`, zIndex: 6 }}
       >
-        {/* The SegMask SVG is sized to the FULL map width, but we only see the visible slice */}
-        <div
-          className="absolute top-0 bottom-0"
-          style={{
-            width: `${100 / ((100 - sliderPos) / 100)}%`,
-            right: 0,
-          }}
+        <div 
+          className="absolute inset-y-0 right-0 pointer-events-none" 
+          style={{ width: `${100 / (1 - sliderPos / 100)}%` }}
         >
-          <SegMask vedge={d.veg / 10} uedge={d.urban / 10} wedge={d.water / 10} />
+          <SegMask vedge={d.veg} uedge={d.urban} wedge={d.water} />
         </div>
       </div>
 
