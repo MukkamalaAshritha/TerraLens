@@ -1068,8 +1068,8 @@ function ApiKeyModal({ onSubmit }) {
 
 // ─── Main App ───────────────────────────────────────────────────────────────────
 export default function App() {
-  const [apiKey, setApiKey] = useState(window.GEMINI_API_KEY || null)
-  const [showKeyModal, setShowKeyModal] = useState(!window.GEMINI_API_KEY)
+  const [apiKey, setApiKey] = useState(import.meta.env.VITE_GEMINI_API_KEY || null)
+  const [showKeyModal, setShowKeyModal] = useState(!import.meta.env.VITE_GEMINI_API_KEY)
   const [activeYear, setActiveYear] = useState(5) // Default to index 5 (2024)
   const [activeLocIdx, setActiveLocIdx] = useState(0) // Hyderabad default
   const [isExporting, setIsExporting] = useState(false)
